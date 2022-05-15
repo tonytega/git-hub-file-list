@@ -1,109 +1,99 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import {PropTypes} from 'prop-types'
+import  Moment  from 'react-moment'
 
+const testFiles = [
+                    {
+                        id: 1,
+                        name: 'src',
+                        type: 'folder',
+                        updated_at: "2016-07-11 21:24:00",
+                        latestCommit: {
+                            message: 'Initial commit'
+                        }
+                    },
+                    {
+                    id: 2,
+                    name: 'tests',
+                    type: 'folder',
+                    updated_at: "2016-07-11 21:24:00",
+                    latestCommit: {
+                    message: 'Initial commit'
+                    }
+                    },
+                    {
+                    id: 3,
+                    name: 'README',
+                    type: 'file',
+                    updated_at: "2016-07-18 21:24:00",
+                    latestCommit: {
+                    message: 'Added a readme'
+                    }
+                    },
+  ];
 
-var testTweet = {
-  message: "Something about cats.",
-  gravatar: "xyz",
-  author: {
-  handle: "catperson",
-  name: "IAMA Cat Person"
-  },
-  likes: 2,
-  retweets: 0,
-  timestamp: "2016-07-30 21:24:37"
+const FileList = ({files})=>(
+  <table className='filelist'>
+    <tbody>
+      {
+      files.map((file)=>(
+          <FileListItem key={file.id} file = {file}/>
+            
+         
+      ))
+      }
+    </tbody>
+  </table>
+)
+FileList.proptype={
+  files : PropTypes.array
+};
+
+const FileListItem = ({file}) =>(
+      <tr className='filelist-item'>
+        <td className='file-icon'> <FileIcon fileIcon = {file.type}/></td>
+        <td className='file-name'><FileName fileName={file.name}/></td>
+        <td><CommitMessage message={file.latestCommit.message}/></td>
+        <td><Time time={file.updated_at}/></td>
+      </tr>
+  )
+FileListItem.propTypes = {
+  file: PropTypes.object.isRequired
   };
-
-function Avatar({hash}){
-  var url = `https://www.gravatar.com/avatar/${hash}`
-  return(
-    <img
-      src= {url}
-      className="avatar"
-      alt="avatar" />
-  )
+function FileName({fileName}){
+  return <span>{fileName}</span>
+}
+const FileIcon = function({fileIcon}) {
+      let icon = "fa-solid fa-file"
+      if (fileIcon === 'folder'){
+          icon = "fa-solid fa-folder"     
+      }
+      return <span ><i class={icon}></i></span>;
 }
 
-function Message({text}){
-  return(
-    <div className='message'>
-      {text}
-    </div>
-  )
+const CommitMessage = function({message}){
+    return <span>{message}</span>
 }
-
-function NameWithHandle({author}){
-  const {name ,handle} = author
-  return(
-    <div className='name-with-handle'>
-      <span className='name'>{name}</span>
-      <span className='handle'>@{handle}</span>
-    </div>
-  )
-}
-
-const Time = ({time})=>{
-  <span className="time">{time}</span>
-};
-
-  function getRetweetCount(count){
-    if(count > 0){
-      return(
-        <span className='retweet-count'>{count}</span>
-      )
-    }else{
-      return null;
-    }
-  }
-
-const ReplyButton = ()=>{
-  <i className="fa fa-reply reply-button"/>
-};
-
-const RetweetButton = ({count})=>{
-  <span className='retweer-button'>
-    <i className="fa-solid fa-retweet"/>
-   { getRetweetCount({count})}
-  </span>
-};
-
-const LikeButton = ({count})=>{
-  <span className='likebutton'>
-    <i className='fa fa-heart like-button'/>
-    {count > 0 && <span className='like-count'> {count}</span>}
-  </span>
-};
-
-const MoreOptionsButton = () => (
-  <i className="fa fa-ellipsis-h more-options-button"/>
-  );
-
-  function Tweet(){
+const Time = ({ time }) => {
+  
     return (
-      <div className="tweet">
-        <Avatar hash={testTweet.gravatar}/>
-        <div className="content">
-          <NameWithHandle author={testTweet.author}/><Time time = {testTweet.timestamp}/>
-          <Message text={testTweet.message}/>
-          <div className="buttons">
-            <ReplyButton/>
-            <RetweetButton count={testTweet.retweets}/>
-            <LikeButton count={testTweet.likes}/>
-            <MoreOptionsButton/>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+        <Moment fromNow> 
+          <span className="time">
+            {time}
+          </span>
+        </Moment>
+     );
+    };
+Time.propTypes = {
+time: PropTypes.string.isRequired
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <div>
-    <Tweet/>
-    
-  </div>
+    <FileList files={testFiles}/>
+      
 );
 
 
